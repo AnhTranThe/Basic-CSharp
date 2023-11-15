@@ -1,134 +1,140 @@
 ﻿using Basic_CSharp.Models;
-using System.Data;
+using Basic_CSharp.Utilities;
 using System.Data.SqlClient;
 
 namespace Basic_CSharp.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly string _connectionString;
+        public string ConnectionString { get; set; }
         public ProductRepository(string connectionString)
         {
-            this._connectionString = connectionString;
+            this.ConnectionString = connectionString;
         }
-
-
-        public async Task<List<Product>> GET_ALL_PRODUCTS_Async()
+        public async Task<List<Product>> GET_ALL_Async()
         {
+            List<Product> productLs = new List<Product>();
+            SqlConnection connection = new SqlConnection(ConnectionString);
+            connection.Open();
             try
             {
-                List<Product> productsLs = new List<Product>();
-                SqlConnection connection = new SqlConnection(_connectionString);
-                connection.StatisticsEnabled = true;
-                connection.FireInfoMessageEventOnUserErrors = true;
-                connection.Open();
-                //INSERT INTO PRODUCTS(ProductId, Product_Name, Price, Quantity, Category)
                 string selectQuery = $"SELECT * FROM PRODUCTS";
+                SqlCommand command = new SqlCommand(selectQuery, connection);
+                SqlDataReader dataReader = command.ExecuteReader();
 
-                SqlDataAdapter adapter = new SqlDataAdapter(selectQuery, connection);
-                DataTable dataTable = new DataTable();
-                await Task.Run(() => adapter.Fill(dataTable));
-
-
-
-                foreach (DataRow row in dataTable.Rows)
+                while (dataReader.Read())
                 {
-                    Product product = new Product
-                    {
-                        ProductId = Guid.Parse(row["ProductId"].ToString()),
-                        Product_Name = row["Product_Name"].ToString(),
-                        Price = Convert.ToDecimal(row["Price"]),
-                        Quantity = Convert.ToInt32(row["Quantity"]),
-                        Category = row["Category"].ToString()
 
-                    };
+                    Product row_Product = new Product();
+                    int index_ProductId = CommonUtils.GetIntFromDataReader(dataReader, "ProductId");
+                    int index_Product_Name = CommonUtils.GetIntFromDataReader(dataReader, "Product_Name");
+                    int index_Price = CommonUtils.GetIntFromDataReader(dataReader, "Price");
+                    int index_Inventory = CommonUtils.GetIntFromDataReader(dataReader, "Inventory");
+                    int index_Category = CommonUtils.GetIntFromDataReader(dataReader, "Category");
 
-                    productsLs.Add(product);
+                    // Access columns by name or index
+                    row_Product.ProductId = !dataReader.IsDBNull(index_ProductId) ? dataReader.GetGuid(index_ProductId) : Guid.Empty;
+                    row_Product.Product_Name = !dataReader.IsDBNull(index_Product_Name) ? dataReader.GetString(index_Product_Name) : string.Empty;
+                    row_Product.Price = !dataReader.IsDBNull(index_Price) ? dataReader.GetDecimal(index_Price) : 0;
+                    row_Product.Inventory = !dataReader.IsDBNull(index_Inventory) ? dataReader.GetInt32(index_Inventory) : 0;
+                    row_Product.Category = !dataReader.IsDBNull(index_Category) ? dataReader.GetString(index_Category) : string.Empty;
+
+                    productLs.Add(row_Product);
                 }
-                connection.Close();
-                return productsLs;
+                dataReader.Close();
+
 
             }
             catch (Exception ex)
             {
                 throw new Exception($"An error occured: {ex.Message}");
             }
+            finally
+            {
+                connection.Close();
+
+            }
+            return productLs;
 
         }
 
-        public async Task<Product> GET_PRODUCT_Async(string ProductId)
+        public async Task<Product> GET_BY_ID_Async(Guid Id)
         {
 
-
+            SqlConnection connection = new SqlConnection(ConnectionString);
+            connection.Open();
+            Product Chk_Product = new Product();
             try
             {
-                Product Chk_Product = new Product();
-                SqlConnection connection = new SqlConnection(_connectionString);
-                connection.StatisticsEnabled = true;
-                connection.FireInfoMessageEventOnUserErrors = true;
-                connection.Open();
-                //INSERT INTO PRODUCTS(ProductId, Product_Name, Price, Quantity, Category)
-                string selectQuery = $"SELECT * FROM PRODUCTS WHERE ProductId = {Guid.Parse(ProductId)} ";
-                SqlDataAdapter adapter = new SqlDataAdapter(selectQuery, connection);
-                DataTable dataTable = new DataTable();
-                adapter.Fill(dataTable);
 
 
-                if (dataTable.Rows.Count > 0)
+                string selectQuery = $"SELECT * FROM PRODUCTS WHERE ProductId = @productId ";
+                SqlCommand command = new SqlCommand(selectQuery, connection);
+                command.Parameters.AddWithValue("@productId", Id);
+                SqlDataReader dataReader = command.ExecuteReader();
+                while (dataReader.Read())
                 {
+                    int index_ProductId = CommonUtils.GetIntFromDataReader(dataReader, "ProductId");
+                    int index_Product_Name = CommonUtils.GetIntFromDataReader(dataReader, "Product_Name");
+                    int index_Price = CommonUtils.GetIntFromDataReader(dataReader, "Price");
+                    int index_Inventory = CommonUtils.GetIntFromDataReader(dataReader, "Inventory");
+                    int index_Category = CommonUtils.GetIntFromDataReader(dataReader, "Category");
 
-                    Chk_Product.ProductId = Guid.Parse(dataTable.Rows[0]["ProductId"].ToString());
-                    Chk_Product.Product_Name = dataTable.Rows[0]["Product_Name"].ToString();
-                    Chk_Product.Price = Convert.ToDecimal(dataTable.Rows[0]["Price"]);
-                    Chk_Product.Quantity = Convert.ToInt32(dataTable.Rows[0]["Quantity"]);
-                    Chk_Product.Category = dataTable.Rows[0]["Category"].ToString();
+                    // Access columns by name or index
+                    Chk_Product.ProductId = !dataReader.IsDBNull(index_ProductId) ? dataReader.GetGuid(index_ProductId) : Guid.Empty;
+                    Chk_Product.Product_Name = !dataReader.IsDBNull(index_Product_Name) ? dataReader.GetString(index_Product_Name) : string.Empty;
+                    Chk_Product.Price = !dataReader.IsDBNull(index_Price) ? dataReader.GetDecimal(index_Price) : 0;
+                    Chk_Product.Inventory = !dataReader.IsDBNull(index_Inventory) ? dataReader.GetInt32(index_Inventory) : 0;
+                    Chk_Product.Category = !dataReader.IsDBNull(index_Category) ? dataReader.GetString(index_Category) : string.Empty;
 
                 }
-                else
-                {
-                    Console.WriteLine("Product not found");
-                }
+                dataReader.Close();
 
-
-                connection.Close();
-                return Chk_Product;
 
             }
+
             catch (Exception ex)
             {
                 throw new Exception($"An error occured: {ex.Message}");
             }
+            finally
+            {
+
+                connection.Close();
+            }
+            return Chk_Product;
+
 
         }
 
-        public async Task<ResponseMessage> ADD_PRODUCT_Async(Product product)
+        public async Task<ResponseMessage> ADD_Async(Product newProduct)
         {
+
+            SqlConnection connection = new SqlConnection(ConnectionString);
+
+            connection.Open();
             try
             {
-                SqlConnection connection = new SqlConnection(_connectionString);
-                connection.StatisticsEnabled = true;
-                connection.FireInfoMessageEventOnUserErrors = true;
-                connection.Open();
-                //INSERT INTO PRODUCTS(ProductId, Product_Name, Price, Quantity, Category)
-                string insertQuery = $"INSERT INTO PRODUCTS (ProductId, Product_Name, Price, Quantity, Category) VALUES(N'{product.ProductId}',N'{product.Product_Name}',{product.Price},{product.Quantity},N'{product.Category}')";
-                SqlCommand insertCommand = new SqlCommand(insertQuery, connection);
-                int result = insertCommand.ExecuteNonQuery();
-                connection.Close();
+
+                string insertQuery = "INSERT INTO PRODUCTS (ProductId, Product_Name, Price, Inventory, Category) " +
+                    "VALUES (@productId, @productName, @price, @inventory, @category)";
+
+                SqlCommand command = new SqlCommand(insertQuery, connection);
+                command.Parameters.AddWithValue("@productId", newProduct.ProductId);
+                command.Parameters.AddWithValue("@productName", newProduct.Product_Name);
+                command.Parameters.AddWithValue("@price", newProduct.Price);
+                command.Parameters.AddWithValue("@inventory", newProduct.Inventory);
+                command.Parameters.AddWithValue("@category", newProduct.Category);
+
+                int result = command.ExecuteNonQuery();
+
                 if (result == 0)
                 {
 
                     return new ResponseMessage
                     {
-                        Message = "Add new product fail !"
-                    };
+                        IsSuccess = false
 
-                }
-
-                else
-                {
-                    return new ResponseMessage
-                    {
-                        Message = "Add new product successfully !"
                     };
 
                 }
@@ -138,17 +144,124 @@ namespace Basic_CSharp.Repositories
             {
                 throw new Exception($"An error occured: {ex.Message}");
             }
+            finally
+            {
+                connection.Close();
+
+            }
+            return new ResponseMessage
+            {
+                IsSuccess = true
+
+            };
         }
 
-        public async Task<ResponseMessage> UPDATE_PRODUCT_Async()
+        public async Task<ResponseMessage> UPDATE_Async(Guid Id, Product ModifiedProduct)
         {
-            throw new NotImplementedException();
+            SqlConnection connection = new SqlConnection(ConnectionString);
+
+            connection.Open();
+            try
+            {
+
+                string updateQuery = $"UPDATE PRODUCTS " +
+                                  $"SET Product_Name = @productname," +
+                                  $"    Price = @price, " +
+                                  $"    Inventory = @inventory, " +
+                                  $"    Category = @category " +
+                                  $"WHERE ProductId = @id";
+
+
+                SqlCommand updateCommand = new SqlCommand(updateQuery, connection);
+
+                updateCommand.Parameters.AddWithValue("@id", Id);
+                updateCommand.Parameters.AddWithValue("@productName", ModifiedProduct.Product_Name);
+                updateCommand.Parameters.AddWithValue("@price", ModifiedProduct.Price);
+                updateCommand.Parameters.AddWithValue("@inventory", ModifiedProduct.Inventory);
+                updateCommand.Parameters.AddWithValue("@category", ModifiedProduct.Category);
+
+
+
+                int result = updateCommand.ExecuteNonQuery();
+
+                if (result == 0)
+                {
+
+                    return new ResponseMessage
+                    {
+                        IsSuccess = false
+
+                    };
+
+                }
+
+                else
+                {
+
+                    return new ResponseMessage
+                    {
+                        IsSuccess = true
+
+                    };
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occured: {ex.Message}");
+            }
+
+            finally
+            {
+                connection.Close();
+            }
         }
 
-        public async Task<ResponseMessage> DELETE_PRODUCT_Async()
+        public async Task<ResponseMessage> DELETE_Async(Guid Id)
         {
-            throw new NotImplementedException();
+            SqlConnection connection = new SqlConnection(ConnectionString);
+
+            connection.Open();
+            try
+            {
+                string deleteQuery = "DELETE FROM PRODUCTS WHERE ProductId = @productId";
+
+                SqlCommand command = new SqlCommand(deleteQuery, connection);
+
+                command.Parameters.AddWithValue("@productId", Id);
+
+                int result = command.ExecuteNonQuery();
+
+                if (result == 0)
+                {
+
+                    return new ResponseMessage
+                    {
+                        IsSuccess = false
+
+                    };
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occured: {ex.Message}");
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+            return new ResponseMessage
+            {
+                IsSuccess = true
+
+            };
         }
+
+
 
     }
 }

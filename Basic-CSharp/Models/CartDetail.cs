@@ -5,12 +5,9 @@ namespace Basic_CSharp.Models
     [Table("CART_DETAILS")]
     public class CartDetail
     {
-
         public Guid CartId { get; set; }
         public virtual Cart Cart { get; set; } = new Cart();
         public Guid ProductId { get; set; }
-        public virtual Product Product { get; set; } = new Product();
         public int Quantity { get; set; } = 0;
-
     }
 }

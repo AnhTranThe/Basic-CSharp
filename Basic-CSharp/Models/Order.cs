@@ -8,7 +8,7 @@ namespace Basic_CSharp.Models
         public Guid OrderId { get; set; } = Guid.NewGuid();
         public DateTime OrderDate { get; set; }
         public Guid UserId { get; set; }
-        public User User { get; set; } = new User();
+        public decimal Amount { get; set; } = 0;
         public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
 

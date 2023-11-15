@@ -2,17 +2,12 @@
 
 namespace Basic_CSharp.Repositories
 {
-    public interface IProductRepository
+    public interface IProductRepository : IGeneralRepository<Product>
     {
-        // METHOD IMPLEMENTATIONS
-        Task<List<Product>> GET_ALL_PRODUCTS_Async();
+        // Additional methods specific to the Product entity, if needed
 
-        Task<Product> GET_PRODUCT_Async(string ProductId);
 
-        Task<ResponseMessage> ADD_PRODUCT_Async(Product product);
 
-        Task<ResponseMessage> UPDATE_PRODUCT_Async();
 
-        Task<ResponseMessage> DELETE_PRODUCT_Async();
     }
 }
