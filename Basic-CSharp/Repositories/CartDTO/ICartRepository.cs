@@ -1,21 +1,21 @@
 ﻿using Basic_CSharp.Models;
+using Basic_CSharp.ViewModels;
 
 namespace Basic_CSharp.Repositories
 {
-    public interface ICartRepository
+    public interface ICartRepository : IGeneralRepository<Cart>
     {
+        Task<ResponseMessage> ADD_CART_ITEMS_Async(CartDetail cartItem);
+        Task<List<ProductInCartViewModel>> GET_PRODUCTS_IN_CART_Async(Guid Id);
+        Task<ProductInCartViewModel> GET_PRODUCT_IN_CART_BY_ID_Async(Guid CartId, Guid ProductId);
+        Task<int> CHECK_EXIST_PRODUCT_IN_CART_BY_ID_Async(Guid CartId, Guid ProductId);
+        Task<ResponseMessage> UPDATE_PRODUCT_IN_CART_BY_ID_Async(CartDetail updateCartDetail);
+        Task<ResponseMessage> DELETE_PRODUCTS_IN_CART_Async(Guid CartId);
+        Task<int> CHECK_EXIST(Guid Id);
 
 
-        // METHOD IMPLEMENTATIONS
-        Task<List<Models.Cart>> GET_ALL_CARTS_Async();
 
-        Task<Models.Cart> GET_CART_Async(Guid id);
 
-        Task<ResponseMessage> ADD_CART_Async(Models.Cart cart);
-
-        Task<ResponseMessage> UPDATE_CART_Async(Models.Cart cart);
-
-        Task<ResponseMessage> DELETE_CART_Async(Guid id);
 
     }
 }

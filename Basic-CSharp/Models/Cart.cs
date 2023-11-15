@@ -8,7 +8,6 @@ namespace Basic_CSharp.Models
 
         public Guid CartId { get; set; } = Guid.NewGuid();
         public Guid UserId { get; set; }
-        public User User { get; set; } = new User();
         public virtual ICollection<CartDetail> cartDetails { get; set; } = new List<CartDetail>();
 
     }

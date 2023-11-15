@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
 
 namespace Basic_CSharp.Utilities
 {
@@ -13,6 +14,32 @@ namespace Basic_CSharp.Utilities
 
             return configurationroot["ConnectionStrings:Default"];
 
+        }
+
+
+        public static bool IsValidEmail(string email)
+        {
+            var trimmedEmail = email.Trim();
+
+            if (trimmedEmail.EndsWith("."))
+            {
+                return false; // suggested by @TK-421
+            }
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == trimmedEmail;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static int GetIntFromDataReader(SqlDataReader reader, string columnName)
+        {
+            int columnIndex = reader.GetOrdinal(columnName);
+            return columnIndex;
         }
 
     }

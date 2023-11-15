@@ -8,6 +8,7 @@ namespace Basic_CSharp
         private static async Task Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             await HomeController.Index();
 
         }

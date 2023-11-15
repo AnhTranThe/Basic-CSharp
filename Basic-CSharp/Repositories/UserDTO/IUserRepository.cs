@@ -2,23 +2,12 @@
 
 namespace Basic_CSharp.Repositories
 {
-    public interface IUserRepository
+    public interface IUserRepository : IGeneralRepository<User>
     {
 
-        // METHOD IMPLEMENTATIONS
-        Task<List<User>> GET_ALL_USERS_Async();
+        ResponseMessage LOGIN_USER();
 
-        Task<User> GET_USER_Async();
-
-        Task<ResponseMessage> ADD_USER_Async();
-
-        Task<ResponseMessage> UPDATE_USER_Async();
-
-        Task<ResponseMessage> DELETE_USER_Async();
-
-        Task<ResponseMessage> LOGIN_USER_Async(string loggedInUserId);
-
-        Task<ResponseMessage> LOGOUT_USER_Async(string loggedInUserId);
+        ResponseMessage LOGOUT_USER();
 
     }
 }

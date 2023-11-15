@@ -14,15 +14,12 @@ namespace Basic_CSharp.Models
 
         public DateTime Dob { get; set; }
 
-
         public string Full_Name { get; set; } = string.Empty;
 
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-
         public string Gender { get; set; } = string.Empty;
-
 
         public List<Cart> Carts { get; set; } = new List<Cart>();
         public List<Order> Orders { get; set; } = new List<Order>();

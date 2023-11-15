@@ -1,19 +1,13 @@
 ﻿using Basic_CSharp.Models;
+using Basic_CSharp.ViewModels;
 
 namespace Basic_CSharp.Repositories
 {
-    public interface IOrderRepository
+    public interface IOrderRepository : IGeneralRepository<Order>
     {
         // METHOD IMPLEMENTATIONS
-        Task<List<Order>> GET_ALL_ORDERS_Async();
+        Task<ResponseMessage> ADD_ORDER_FROM_CART_ITEMS_Async(List<ProductInCartViewModel> productsInCart, decimal AmountOrder, Guid userId);
 
-        Task<Order> GET_ORDER_Async(Guid id);
-
-        Task<ResponseMessage> ADD_ORDER_Async(Order order);
-
-        Task<ResponseMessage> UPDATE_ORDER_Async(Order order);
-
-        Task<ResponseMessage> DELETE_ORDER_Async(Guid id);
 
     }
 }
