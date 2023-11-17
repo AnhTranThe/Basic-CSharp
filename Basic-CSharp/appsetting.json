@@ -1,0 +1,6 @@
+{
+  "ConnectionStrings": {
+    "Default": "Data Source=YOUR DATA SOURCE; Initial Catalog=NAME DATABASE ;User ID= YOUR USER ID;Password= YOUR PASSWORD; TrustServerCertificate=true;MultipleActiveResultSets=true"
+    
+  }
+}
