@@ -41,7 +41,8 @@ namespace Basic_CSharp.Controllers
                     {
                         foreach (ProductInOrderViewModel productItem in ProductInOrders)
                         {
-                            Console.WriteLine($"Product Id: {productItem.ProductId}, " +
+                            Console.WriteLine($"Order Id: {productItem.OrderId}, " +
+                                             $"Product Id: {productItem.ProductId}, " +
                                              $"Name: {productItem.Product_Name}, " +
                                              $"Price: {productItem.Price}, " +
                                              $"Quantity: {productItem.Quantity}, " +

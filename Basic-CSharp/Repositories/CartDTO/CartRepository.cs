@@ -248,7 +248,7 @@ namespace Basic_CSharp.Repositories
                     string selectQuery = "SELECT cd.CartId, p.ProductId, p.Product_Name, p.Price, cd.Quantity, p.Category " +
                                          "FROM PRODUCTS p " +
                                          "INNER JOIN CART_DETAILS cd ON p.ProductId = cd.ProductId " +
-                                         "WHERE cd.CartId = @CartId";
+                                         "WHERE cd.CartId = CAST(@CartId AS UNIQUEIDENTIFIER)";
 
                     SqlCommand command = new SqlCommand(selectQuery, connection);
 

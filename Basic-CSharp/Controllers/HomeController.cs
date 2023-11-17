@@ -148,7 +148,7 @@ namespace Basic_CSharp.Controllers
                         Console.WriteLine("2. VIEW ALL PRODUCTS IN CART");
                         Console.WriteLine("3. DELETE PRODUCT ITEM IN CART");
                         Console.WriteLine("4. ORDER PRODUCTS FROM CART");
-                        Console.WriteLine("5. DELETE ORDER PRODUCTS");
+                        Console.WriteLine("5. GET ALL ORDER DETAIL");
                         Console.WriteLine("0. LOGOUT");
 
 
@@ -324,7 +324,7 @@ namespace Basic_CSharp.Controllers
         ///    +   VIEW ALL PRODUCTS IN CART
         ///    +   DELETE PRODUCT ITEM IN CART
         ///    +   ORDER PRODUCTS FROM CART
-        ///    +   DELETE ORDER PRODUCTS
+        ///    +   GET ALL ORDER DETAIL
         /// </summary>
         /// <returns></returns>
         public static async Task REDIRECT_TO_SELECTED_OPTION_GUEST(int int_rdx_SELECTED_OPTION)
@@ -364,8 +364,8 @@ namespace Basic_CSharp.Controllers
                     break;
 
                 case 5:
-                    ///5. DELETE ORDER PRODUCTS
-                    await OrderController.DELETE_USER_ORDER();
+                    ///5. GET ALL ORDER DETAIL
+                    await OrderController.VIEW_ALL_USER_ORDERS();
 
                     break;
                 default:

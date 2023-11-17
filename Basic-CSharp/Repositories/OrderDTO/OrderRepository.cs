@@ -323,22 +323,23 @@ namespace Basic_CSharp.Repositories
                                 // Display products in the order
                                 while (productsInOrderReader.Read())
                                 {
-                                    int index_ProductId = CommonUtils.GetIntFromDataReader(userOrdersReader, "ProductId");
-                                    int index_OrderId = CommonUtils.GetIntFromDataReader(userOrdersReader, "OrderId");
-                                    int index_Product_Name = CommonUtils.GetIntFromDataReader(userOrdersReader, "Product_Name");
-                                    int index_CurrentPrice = CommonUtils.GetIntFromDataReader(userOrdersReader, "CurrentPrice");
-                                    int index_Quantity = CommonUtils.GetIntFromDataReader(userOrdersReader, "Quantity");
-                                    int index_Category = CommonUtils.GetIntFromDataReader(userOrdersReader, "Category");
+                                    int index_ProductId = CommonUtils.GetIntFromDataReader(productsInOrderReader, "ProductId");
+                                    int index_Product_Name = CommonUtils.GetIntFromDataReader(productsInOrderReader, "Product_Name");
+                                    int index_CurrentPrice = CommonUtils.GetIntFromDataReader(productsInOrderReader, "CurrentPrice");
+                                    int index_Quantity = CommonUtils.GetIntFromDataReader(productsInOrderReader, "Quantity");
+                                    int index_OrderId = CommonUtils.GetIntFromDataReader(productsInOrderReader, "OrderId");
+
+                                    int index_Category = CommonUtils.GetIntFromDataReader(productsInOrderReader, "Category");
 
 
                                     ProductInOrderViewModel productInOrderItem = new ProductInOrderViewModel
                                     {
-                                        ProductId = !userOrdersReader.IsDBNull(index_ProductId) ? userOrdersReader.GetGuid(index_ProductId) : Guid.Empty,
-                                        OrderId = !userOrdersReader.IsDBNull(index_OrderId) ? userOrdersReader.GetGuid(index_OrderId) : Guid.Empty,
-                                        Product_Name = !userOrdersReader.IsDBNull(index_Product_Name) ? userOrdersReader.GetString(index_Product_Name) : string.Empty,
-                                        Price = !userOrdersReader.IsDBNull(index_CurrentPrice) ? userOrdersReader.GetDecimal(index_CurrentPrice) : 0,
-                                        Quantity = !userOrdersReader.IsDBNull(index_Quantity) ? userOrdersReader.GetInt32(index_Quantity) : 0,
-                                        Category = !userOrdersReader.IsDBNull(index_Category) ? userOrdersReader.GetString(index_Category) : string.Empty
+                                        ProductId = !productsInOrderReader.IsDBNull(index_ProductId) ? productsInOrderReader.GetGuid(index_ProductId) : Guid.Empty,
+                                        OrderId = !productsInOrderReader.IsDBNull(index_OrderId) ? productsInOrderReader.GetGuid(index_OrderId) : Guid.Empty,
+                                        Product_Name = !productsInOrderReader.IsDBNull(index_Product_Name) ? productsInOrderReader.GetString(index_Product_Name) : string.Empty,
+                                        Price = !productsInOrderReader.IsDBNull(index_CurrentPrice) ? productsInOrderReader.GetDecimal(index_CurrentPrice) : 0,
+                                        Quantity = !productsInOrderReader.IsDBNull(index_Quantity) ? productsInOrderReader.GetInt32(index_Quantity) : 0,
+                                        Category = !productsInOrderReader.IsDBNull(index_Category) ? productsInOrderReader.GetString(index_Category) : string.Empty
                                     };
 
                                     productInOrderLs.Add(productInOrderItem);
@@ -350,11 +351,9 @@ namespace Basic_CSharp.Repositories
                         }
 
                     }
+                    await connection.CloseAsync();
 
                 }
-
-
-
 
             }
             catch (Exception ex)
