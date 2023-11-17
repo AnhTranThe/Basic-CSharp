@@ -7,5 +7,4 @@
 ![](https://github.com/AnhTranThe/Basic-CSharp/blob/6955d6f00abb5dc8207f4a0b74a50c5e8a86593e/Basic-CSharp/Picture/Preview_Admin.png)
 
 ## *Guest GUI*
-![](https://github.com/AnhTranThe/Basic-CSharp/blob/6955d6f00abb5dc8207f4a0b74a50c5e8a86593e/Basic-CSharp/Picture/Preview_Guest.png)
-
+![](https://github.com/AnhTranThe/Basic-CSharp/blob/main/Basic-CSharp/Picture/Preview_Guest.png)
