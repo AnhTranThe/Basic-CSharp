@@ -398,3 +398,4 @@ FodyWeavers.xsd
 *.sln.iml
 /bfg-1.14.0.jar
 /Passwords.txt
+/Basic-CSharp/appsetting.json

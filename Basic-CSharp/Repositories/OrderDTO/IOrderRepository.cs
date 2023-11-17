@@ -6,8 +6,8 @@ namespace Basic_CSharp.Repositories
     public interface IOrderRepository : IGeneralRepository<Order>
     {
         // METHOD IMPLEMENTATIONS
-        Task<ResponseMessage> ADD_ORDER_FROM_CART_ITEMS_Async(List<ProductInCartViewModel> productsInCart, decimal AmountOrder, Guid userId);
-
+        Task<ResponseMessage> ADD_CART_TO_ORDER_DETAIL_Async(Order newOrder, List<ProductInCartViewModel> productsInCart);
+        Task<List<ProductInOrderViewModel>> GET_PRODUCTS_IN_ORDERS_Async(Guid UserId);
 
     }
 }

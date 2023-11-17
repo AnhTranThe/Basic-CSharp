@@ -29,7 +29,7 @@ namespace Basic_CSharp.Repositories
 
                 string selectQuery = $"SELECT * FROM USERS";
                 SqlCommand command = new SqlCommand(selectQuery, connection);
-                SqlDataReader dataReader = command.ExecuteReader();
+                SqlDataReader dataReader = await command.ExecuteReaderAsync();
 
                 while (dataReader.Read())
                 {
@@ -61,7 +61,7 @@ namespace Basic_CSharp.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
             finally
             {
@@ -84,7 +84,7 @@ namespace Basic_CSharp.Repositories
                 string selectQuery = $"SELECT * FROM USERS WHERE UserId = @userId ";
                 SqlCommand command = new SqlCommand(selectQuery, connection);
                 command.Parameters.AddWithValue("@userId", Id);
-                SqlDataReader dataReader = command.ExecuteReader();
+                SqlDataReader dataReader = await command.ExecuteReaderAsync();
                 while (dataReader.Read())
                 {
                     int index_UserId = CommonUtils.GetIntFromDataReader(dataReader, "UserId");
@@ -113,7 +113,7 @@ namespace Basic_CSharp.Repositories
 
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
             finally
             {
@@ -145,7 +145,7 @@ namespace Basic_CSharp.Repositories
                 command.Parameters.AddWithValue("@email", newUser.Email);
                 command.Parameters.AddWithValue("@gender", newUser.Gender);
 
-                int result = command.ExecuteNonQuery();
+                int result = await command.ExecuteNonQueryAsync();
 
                 if (result == 0)
                 {
@@ -161,7 +161,7 @@ namespace Basic_CSharp.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
             finally
             {
@@ -202,7 +202,7 @@ namespace Basic_CSharp.Repositories
                 command.Parameters.AddWithValue("@gender", ModifiedUser.Gender);
 
 
-                int result = command.ExecuteNonQuery();
+                int result = await command.ExecuteNonQueryAsync();
 
                 if (result == 0)
                 {
@@ -221,7 +221,7 @@ namespace Basic_CSharp.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
 
             finally
@@ -248,7 +248,7 @@ namespace Basic_CSharp.Repositories
 
                 command.Parameters.AddWithValue("@userId", Id);
 
-                int result = command.ExecuteNonQuery();
+                int result = await command.ExecuteNonQueryAsync();
 
                 if (result == 0)
                 {
@@ -264,7 +264,7 @@ namespace Basic_CSharp.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
 
             finally
@@ -310,7 +310,7 @@ namespace Basic_CSharp.Repositories
             catch (Exception ex)
             {
 
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
             finally { connection.Close(); }
 
@@ -330,5 +330,29 @@ namespace Basic_CSharp.Repositories
             };
 
         }
+
+        public int CHECK_EXIST(Guid Id)
+        {
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+
+                connection.Open();
+                string selectQuery = "SELECT COUNT(*) FROM USERS WHERE UserId = @UserId";
+                SqlCommand command = new SqlCommand(selectQuery, connection);
+                command.Parameters.AddWithValue("@UserId", Id);
+
+                object result = command.ExecuteScalarAsync();
+
+                int cartCount = result != null ? Convert.ToInt32(result) : 0;
+                connection.Close();
+                return cartCount;
+
+
+
+            }
+
+        }
+
     }
 }

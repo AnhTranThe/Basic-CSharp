@@ -8,14 +8,35 @@ namespace Basic_CSharp.Controllers
 {
     public static class CartController
     {
+
+        /// <summary>
+
+        /// Represents a repository for managing cart-related operations.
+        /// Represents a repository for managing product-related operations.
+
+        /// </summary>
         static readonly CartRepository cartRepository = new CartRepository(CommonUtils.GetConnectString());
         static readonly ProductRepository productRepository = new ProductRepository(CommonUtils.GetConnectString());
-
+        /// <summary>
+        /// Add Product from Product Table to Cart Table: 
+        ///    +  Update or Add Cart to User
+        ///    +  Add new Product Item to Cart or Update quantity Product in Cart
+        ///    +  Update Product Inventory
+        /// </summary>
+        /// <returns></returns>
         public static async Task ADD_PRODUCT_TO_CART()
         {
 
             try
             {
+
+                //********************************************
+                //
+                // Get All Product available from Product table
+                //
+                //********************************************
+
+
                 // DISPLAY MESSAGE
                 Console.WriteLine("**** AVAILABLE PRODUCTS ****");
 
@@ -23,10 +44,18 @@ namespace Basic_CSharp.Controllers
 
                 foreach (Product product in PRODUCTS)
                 {
-                    Console.WriteLine($"ProductId: {product.ProductId}, Name: {product.Product_Name}, Price: {product.Price}, Inventory: {product.Inventory}, Category: {product.Category}");
+                    Console.WriteLine($"ProductId: {product.ProductId} , Name: {product.Product_Name}, Price: {product.Price}, Inventory: {product.Inventory}, Category: {product.Category}");
                 }
 
                 Guid productId;
+
+                //********************************************
+                //
+                // Enter ProductId and then continue
+                //
+                //********************************************
+
+
                 do
                 {
 
@@ -41,6 +70,18 @@ namespace Basic_CSharp.Controllers
                     }
                 } while (productId == Guid.Empty);
 
+
+
+
+                //********************************************
+                //
+                // Check Existed Product Item in Product Tb
+                //
+                //********************************************
+
+
+
+
                 Product existingProduct = await productRepository.GET_BY_ID_Async(productId);
                 if (existingProduct == null)
                 {
@@ -50,7 +91,17 @@ namespace Basic_CSharp.Controllers
                 else
                 {
 
-                    Console.WriteLine($"ProductId: {existingProduct.ProductId}, Name: {existingProduct.Product_Name}, Price: {existingProduct.Price}, Quantity: {existingProduct.Inventory}, Category: {existingProduct.Category}");
+                    Console.WriteLine($"ProductId: {existingProduct.ProductId} , Name: {existingProduct.Product_Name}, Price: {existingProduct.Price}, Quantity: {existingProduct.Inventory}, Category: {existingProduct.Category}");
+
+
+
+                    //********************************************
+                    //
+                    //  Product existed then compare number of product inventory >0 then enter quantity guest want
+                    //
+                    //********************************************
+
+
 
                     if (existingProduct.Inventory > 0)
                     {
@@ -71,9 +122,16 @@ namespace Basic_CSharp.Controllers
                             }
                         } while (true);
 
+                        //********************************************
+                        //
+                        //  Check user cart existed, if not then create new cart to user, else get user cart
+                        //
+                        //********************************************
+
+
 
                         Guid currentUser = HomeController.CURRENT_USER_ID();
-                        int chckExistingCart = await cartRepository.CHECK_EXIST(currentUser);
+                        int chckExistingCart = cartRepository.CHECK_EXIST(currentUser);
 
                         CartDetail cartItem = new CartDetail();
 
@@ -103,6 +161,14 @@ namespace Basic_CSharp.Controllers
                         else
 
                         {
+
+                            //********************************************
+                            //
+                            //  Check product in user cart, if have product Id in cart then increase number quantity, ortherwise add new product to cart
+                            //
+                            //********************************************
+
+
                             Cart existingCart = await cartRepository.GET_BY_ID_Async(currentUser);
                             if (existingCart == null)
                             {
@@ -138,6 +204,14 @@ namespace Basic_CSharp.Controllers
                                     response = await cartRepository.UPDATE_PRODUCT_IN_CART_BY_ID_Async(UpdateCartItem);
 
                                 }
+
+
+                                //********************************************
+                                //
+                                //  After add product to cart, update product inventory in Product Tb
+                                //
+                                //********************************************
+
 
                                 if (response != null && response.IsSuccess)
                                 {
@@ -181,7 +255,13 @@ namespace Basic_CSharp.Controllers
             }
 
         }
-
+        /// <summary>
+        /// View All Product from Cart: 
+        ///    +  Check current User log in 
+        ///    +  Check user cart existed 
+        ///    +  Get information all Product in user cart and sum total price
+        /// </summary>
+        /// <returns></returns>
         public static async Task VIEW_ALL_PRODUCTS_IN_CART()
         {
             try
@@ -190,7 +270,7 @@ namespace Basic_CSharp.Controllers
                 Console.WriteLine("**** AVAILABLE PRODUCTS IN CARTS ****");
 
                 Guid currentUser = HomeController.CURRENT_USER_ID();
-                int chckExistingCart = await cartRepository.CHECK_EXIST(currentUser);
+                int chckExistingCart = cartRepository.CHECK_EXIST(currentUser);
                 Guid newCartId = Guid.NewGuid();
                 if (chckExistingCart == 0)
                 {
@@ -225,7 +305,7 @@ namespace Basic_CSharp.Controllers
                     {
                         foreach (ProductInCartViewModel productItem in PRODUCTS_IN_CART)
                         {
-                            Console.WriteLine($"Id: {productItem.Id}, Product Name: {productItem.Product_Name}, Price: {productItem.Price}, Quantity: {productItem.Quantity}, Category: {productItem.Category}");
+                            Console.WriteLine($"Id: {productItem.Id} , Product Name: {productItem.Product_Name}, Price: {productItem.Price}, Quantity: {productItem.Quantity}, Category: {productItem.Category}");
                         }
                         // Calculate and display the total price
                         decimal totalPrice = PRODUCTS_IN_CART.Sum(product => product.Price);
@@ -248,9 +328,27 @@ namespace Basic_CSharp.Controllers
                 await HomeController.Index();
             }
         }
+        /// <summary>
+        /// Delete product item in Cart: 
+        ///    +  Check current User log in 
+        ///    +  Check user cart existed 
+        ///    +  Get information all Product in user cart and sum total price
+        ///    +  Enter Product item want to delete
+        ///    +  Update Product Inventory in Product table
+        /// </summary>
+        /// <returns></returns>
+        
 
+        
         public static async Task DELETE_PRODUCT_IN_CART()
         {
+
+            //********************************************
+            //
+            //  Check user cart existed
+            //
+            //********************************************
+
             try
             {
                 // DISPLAY MESSAGE
@@ -266,6 +364,15 @@ namespace Basic_CSharp.Controllers
                 }
                 else
                 {
+
+
+                    //********************************************
+                    //
+                    //  Get all product in user cart
+                    //
+                    //********************************************
+
+
                     List<ProductInCartViewModel> PRODUCTS_IN_CART = await cartRepository.GET_PRODUCTS_IN_CART_Async(existingCart.CartId);
 
                     // Check if there are products in the cart
@@ -285,7 +392,13 @@ namespace Basic_CSharp.Controllers
                         Console.WriteLine($"Total Price: {totalPrice}");
 
                     }
-                    // Ask the user to enter the ProductId to delete
+
+                    //********************************************
+                    //
+                    //  Enter product id to delete from cart
+                    //
+                    //********************************************
+
                     Console.WriteLine($"{Environment.NewLine}Enter PRODUCT ID to delete from CART ");
                     Guid productIdToDelete;
                     do
@@ -308,6 +421,13 @@ namespace Basic_CSharp.Controllers
                     int InventoryProduct = 0;
                     int QuantityProductInCart = 0;
 
+
+                    //********************************************
+                    //
+                    //  Check product id in Product table and update inventory product
+                    //
+                    //********************************************
+
                     Product ExistProduct = await productRepository.GET_BY_ID_Async(productIdToDelete);
                     if (ExistProduct != null)
                     {
@@ -328,6 +448,12 @@ namespace Basic_CSharp.Controllers
 
                         };
                         ResponseMessage response = await productRepository.UPDATE_Async(productIdToDelete, updateProduct);
+                        //********************************************
+                        //
+                        //  delete product id in cart table
+                        //
+                        //********************************************
+
                         if (response != null && response.IsSuccess)
                         {
                             ResponseMessage responseDelete = await cartRepository.DELETE_PRODUCTS_IN_CART_Async(productIdToDelete);
@@ -360,12 +486,6 @@ namespace Basic_CSharp.Controllers
 
 
         }
-
-
-
-
-
-
 
     }
 

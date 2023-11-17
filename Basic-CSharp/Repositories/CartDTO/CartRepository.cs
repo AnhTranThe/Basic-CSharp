@@ -30,7 +30,7 @@ namespace Basic_CSharp.Repositories
                 string selectQuery = "SELECT CartId, UserId FROM CARTS WHERE UserId = @userid";
                 SqlCommand command = new SqlCommand(selectQuery, connection);
                 command.Parameters.AddWithValue("@userid", Id);
-                SqlDataReader dataReader = command.ExecuteReader();
+                SqlDataReader dataReader = await command.ExecuteReaderAsync();
                 while (dataReader.Read())
                 {
                     int index_CartId = dataReader.GetOrdinal("CartId");
@@ -47,7 +47,7 @@ namespace Basic_CSharp.Repositories
 
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
             finally
             {
@@ -59,29 +59,20 @@ namespace Basic_CSharp.Repositories
 
         }
 
-        public async Task<int> CHECK_EXIST(Guid Id)
+        public int CHECK_EXIST(Guid Id)
         {
 
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
-                try
-                {
-                    connection.Open();
-                    string selectQuery = "SELECT COUNT(*) FROM CARTS WHERE UserId = @userId";
-                    SqlCommand command = new SqlCommand(selectQuery, connection);
-                    command.Parameters.AddWithValue("@userid", Id);
 
-                    object result = command.ExecuteScalar();
-                    int cartCount = result != null ? Convert.ToInt32(result) : 0;
-                    return cartCount;
-                }
-
-                catch (Exception ex)
-                {
-                    throw new Exception($"An error occured: {ex.Message}");
-
-                }
-                finally { connection.Close(); }
+                connection.Open();
+                string selectQuery = "SELECT COUNT(*) FROM CARTS WHERE UserId = @userId";
+                SqlCommand command = new SqlCommand(selectQuery, connection);
+                command.Parameters.AddWithValue("@userid", Id);
+                object result = command.ExecuteScalar();
+                int cartCount = result != null ? Convert.ToInt32(result) : 0;
+                connection.Close();
+                return cartCount;
 
             }
 
@@ -105,7 +96,7 @@ namespace Basic_CSharp.Repositories
                 command.Parameters.AddWithValue("@userId", newCart.UserId);
 
 
-                int result = command.ExecuteNonQuery();
+                int result = await command.ExecuteNonQueryAsync();
 
                 if (result == 0)
                 {
@@ -121,7 +112,7 @@ namespace Basic_CSharp.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
             finally
             {
@@ -212,7 +203,7 @@ namespace Basic_CSharp.Repositories
                 command.Parameters.AddWithValue("@quantity", cartItem.Quantity);
 
 
-                int result = command.ExecuteNonQuery();
+                int result = await command.ExecuteNonQueryAsync();
 
                 if (result == 0)
                 {
@@ -228,7 +219,7 @@ namespace Basic_CSharp.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
             finally
             {
@@ -262,7 +253,7 @@ namespace Basic_CSharp.Repositories
                     SqlCommand command = new SqlCommand(selectQuery, connection);
 
                     command.Parameters.AddWithValue("@CartId", CartId);
-                    SqlDataReader reader = command.ExecuteReader();
+                    SqlDataReader reader = await command.ExecuteReaderAsync();
 
                     int idCounter = 1;
                     while (reader.Read())
@@ -319,7 +310,7 @@ namespace Basic_CSharp.Repositories
                     command.Parameters.AddWithValue("@productId", ProductId);
 
 
-                    SqlDataReader reader = command.ExecuteReader();
+                    SqlDataReader reader = await command.ExecuteReaderAsync();
 
 
                     while (reader.Read())
@@ -356,25 +347,17 @@ namespace Basic_CSharp.Repositories
 
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
-                try
-                {
-                    connection.Open();
-                    string selectQuery = "SELECT COUNT(*) FROM CART_DETAILS WHERE CartId = @cartid AND ProductId = @productId";
-                    SqlCommand command = new SqlCommand(selectQuery, connection);
-                    command.Parameters.AddWithValue("@cartid", CartId);
-                    command.Parameters.AddWithValue("@productId", ProductId);
 
-                    object result = command.ExecuteScalar();
-                    int cartCount = result != null ? Convert.ToInt32(result) : 0;
-                    return cartCount;
-                }
+                connection.Open();
+                string selectQuery = "SELECT COUNT(*) FROM CART_DETAILS WHERE CartId = @cartid AND ProductId = @productId";
+                SqlCommand command = new SqlCommand(selectQuery, connection);
+                command.Parameters.AddWithValue("@cartid", CartId);
+                command.Parameters.AddWithValue("@productId", ProductId);
+                object result = await command.ExecuteScalarAsync();
+                connection.Close();
+                int cartCount = result != null ? Convert.ToInt32(result) : 0;
+                return cartCount;
 
-                catch (Exception ex)
-                {
-                    throw new Exception($"An error occured: {ex.Message}");
-
-                }
-                finally { connection.Close(); }
 
             }
 
@@ -394,7 +377,7 @@ namespace Basic_CSharp.Repositories
                 updateCommand.Parameters.AddWithValue("@cartId", modifiedProductInCart.CartId);
                 updateCommand.Parameters.AddWithValue("@productId", modifiedProductInCart.ProductId);
 
-                int result = updateCommand.ExecuteNonQuery();
+                int result = await updateCommand.ExecuteNonQueryAsync();
 
                 if (result == 0)
                 {
@@ -421,7 +404,12 @@ namespace Basic_CSharp.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                return new ResponseMessage
+                {
+                    IsSuccess = false,
+                    Message = ex.Message
+
+                };
             }
 
             finally

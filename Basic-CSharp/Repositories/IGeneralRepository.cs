@@ -10,6 +10,7 @@ namespace Basic_CSharp.Repositories
         Task<ResponseMessage> ADD_Async(T entity);
         Task<ResponseMessage> UPDATE_Async(Guid Id, T entity);
         Task<ResponseMessage> DELETE_Async(Guid Id);
+        int CHECK_EXIST(Guid Id);
 
     }
 }

@@ -7,17 +7,16 @@ namespace Basic_CSharp.Controllers
     public static class UserController
     {
         readonly static UserRepository userRepository = new UserRepository(CommonUtils.GetConnectString());
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static Guid SIGN_IN_USER()
         {
-
             try
             {
                 ResponseMessage RESPONSE = userRepository.LOGIN_USER();
-
                 return RESPONSE.LogInUserId;
-
-
             }
             catch (Exception e)
             {
@@ -29,7 +28,6 @@ namespace Basic_CSharp.Controllers
 
         public static async Task SIGN_UP_USER()
         {
-
 
             Console.WriteLine("Please add information about new user >");
             string firstName = string.Empty;

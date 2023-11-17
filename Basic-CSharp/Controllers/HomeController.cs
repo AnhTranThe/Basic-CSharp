@@ -5,6 +5,11 @@ namespace Basic_CSharp.Controllers
     public static class HomeController
     {
         public static Guid loggedInUserId = Guid.Empty; // Keep track of the logged-in user
+
+        /// <summary>
+        /// Index Home: 
+        /// </summary>
+        /// <returns></returns>
         public static async Task Index()
         {
 
@@ -43,9 +48,11 @@ namespace Basic_CSharp.Controllers
 
                             else
                             {
-
+                                Console.WriteLine("Select option ");
                                 switch (int_rdx_SELECTED_OPTION)
                                 {
+
+
                                     case 0:
                                         await HomeController.Index();
                                         break;
@@ -92,8 +99,6 @@ namespace Basic_CSharp.Controllers
                                     Console.WriteLine($"{Environment.NewLine} Choose which objects to select");
                                     Console.WriteLine("1. CRUD USERS >");
                                     Console.WriteLine("2. CRUD PRODUCTS >");
-                                    //Console.WriteLine("3. CRUD CARTS >");
-                                    //Console.WriteLine("4. CRUD ORDERS >");
                                     Console.WriteLine("0. EXIT >");
 
                                     // RECEIVE USER INPUT
@@ -189,17 +194,33 @@ namespace Basic_CSharp.Controllers
             }
 
         }
+        /// <summary>
+        /// Return back current user log in
+        /// </summary>
+        /// <returns></returns>
         public static Guid CURRENT_USER_ID()
         {
             return loggedInUserId;
         }
-
+        /// <summary>
+        /// after log in , if user is admin then redirect to admin options , only 1 admin account : admin@gmail.com
+        /// Admin account options:
+        ///    +   CRUD Product
+        ///    +   CRUD User
+        /// </summary>
+        /// <returns></returns>
         public static async Task REDIRECT_TO_SELECTED_OPTION_ADMIN(string rdx_SELECTED_OPTION)
         {
             Console.WriteLine($"{Environment.NewLine}Selected option: {rdx_SELECTED_OPTION}");
             int int_rdx_SELECTED_OPTION = Convert.ToInt32(rdx_SELECTED_OPTION);
             switch (int_rdx_SELECTED_OPTION)
             {
+                //********************************************
+                //
+                // CRUD USERS
+                //
+                //********************************************
+
                 case 1:
                     // DISPLAY OPTIONS USERS
                     Console.WriteLine("1. Add a user >");
@@ -241,7 +262,14 @@ namespace Basic_CSharp.Controllers
                     }
 
                     break;
+                //********************************************
+                //
+                // CRUD PRODUCTS
+                //
+                //********************************************
                 case 2:
+
+
                     // DISPLAY OPTIONS PRODUCTS
                     Console.WriteLine("1. Add a product >");
                     Console.WriteLine("2. View all products >");
@@ -282,27 +310,6 @@ namespace Basic_CSharp.Controllers
                     }
 
                     break;
-
-                case 3:
-                    // DISPLAY OPTIONS CARTS
-                    Console.WriteLine("1. Add a cart >");
-                    Console.WriteLine("2. View all carts >");
-                    Console.WriteLine("3. View a cart >");
-                    Console.WriteLine("4. Update a cart >");
-                    Console.WriteLine("5. Delete a cart >");
-                    Console.WriteLine("0. Exit >");
-                    break;
-
-                case 4:
-                    // DISPLAY OPTIONS CARTS
-                    Console.WriteLine("1. Add a order >");
-                    Console.WriteLine("2. View all orders >");
-                    Console.WriteLine("3. View a order >");
-                    Console.WriteLine("4. Update a order >");
-                    Console.WriteLine("5. Delete a order >");
-                    Console.WriteLine("0. Exit >");
-                    break;
-
                 case 0:
                     Console.Clear();
                     await Index();
@@ -310,9 +317,19 @@ namespace Basic_CSharp.Controllers
 
             }
         }
-
+        /// <summary>
+        /// after log in , if user is guest then redirect to guest options: otther user account , ex: tranquangkhai@gmail.com
+        /// Guest account options:
+        ///    +   ADD PRODUCT ITEM TO CART
+        ///    +   VIEW ALL PRODUCTS IN CART
+        ///    +   DELETE PRODUCT ITEM IN CART
+        ///    +   ORDER PRODUCTS FROM CART
+        ///    +   DELETE ORDER PRODUCTS
+        /// </summary>
+        /// <returns></returns>
         public static async Task REDIRECT_TO_SELECTED_OPTION_GUEST(int int_rdx_SELECTED_OPTION)
         {
+            Console.WriteLine($"{Environment.NewLine}Selected option: {int_rdx_SELECTED_OPTION}");
 
             switch (int_rdx_SELECTED_OPTION)
             {
@@ -342,13 +359,13 @@ namespace Basic_CSharp.Controllers
 
                 case 4:
                     ///4. ORDER PRODUCTS FROM CART
-                    await OrderController.ADD_PRODUCT_CART_TO_ORDER();
+                    await OrderController.ADD_PRODUCT_CART_TO_USER_ORDER();
 
                     break;
 
                 case 5:
                     ///5. DELETE ORDER PRODUCTS
-                    await OrderController.DELETE_ORDER();
+                    await OrderController.DELETE_USER_ORDER();
 
                     break;
                 default:
@@ -356,13 +373,6 @@ namespace Basic_CSharp.Controllers
                     break;
 
             }
-
-
-
-
-
-
-
 
         }
 

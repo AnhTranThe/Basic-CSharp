@@ -47,7 +47,7 @@ namespace Basic_CSharp.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
             finally
             {
@@ -95,7 +95,7 @@ namespace Basic_CSharp.Repositories
 
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
             finally
             {
@@ -126,7 +126,7 @@ namespace Basic_CSharp.Repositories
                 command.Parameters.AddWithValue("@inventory", newProduct.Inventory);
                 command.Parameters.AddWithValue("@category", newProduct.Category);
 
-                int result = command.ExecuteNonQuery();
+                int result = await command.ExecuteNonQueryAsync();
 
                 if (result == 0)
                 {
@@ -142,7 +142,7 @@ namespace Basic_CSharp.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
             finally
             {
@@ -182,7 +182,7 @@ namespace Basic_CSharp.Repositories
 
 
 
-                int result = updateCommand.ExecuteNonQuery();
+                int result = await updateCommand.ExecuteNonQueryAsync();
 
                 if (result == 0)
                 {
@@ -209,7 +209,12 @@ namespace Basic_CSharp.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                return new ResponseMessage
+                {
+                    IsSuccess = true,
+                    Message = ex.Message
+
+                };
             }
 
             finally
@@ -231,7 +236,7 @@ namespace Basic_CSharp.Repositories
 
                 command.Parameters.AddWithValue("@productId", Id);
 
-                int result = command.ExecuteNonQuery();
+                int result = await command.ExecuteNonQueryAsync();
 
                 if (result == 0)
                 {
@@ -247,7 +252,7 @@ namespace Basic_CSharp.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"An error occured: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
 
             finally
@@ -261,6 +266,32 @@ namespace Basic_CSharp.Repositories
             };
         }
 
+        public int CHECK_EXIST(Guid Id)
+        {
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+
+                connection.Open();
+                string selectQuery = "SELECT COUNT(*) FROM PRODUCTS WHERE ProductId = @productId";
+                SqlCommand command = new SqlCommand(selectQuery, connection);
+                command.Parameters.AddWithValue("@productId", Id);
+
+                object result = command.ExecuteScalarAsync();
+
+                int cartCount = result != null ? Convert.ToInt32(result) : 0;
+                connection.Close();
+                return cartCount;
+
+
+
+
+
+
+
+            }
+
+        }
 
 
     }
